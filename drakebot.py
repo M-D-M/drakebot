@@ -5,6 +5,7 @@ from slackclient import SlackClient
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
 # instantiate eliza
+eliza_mode = 0
 therapist = eliza.eliza()
 
 # drakebot's user ID in Slack: value is assigned after the bot starts up
@@ -50,43 +51,49 @@ def handle_command(command, channel):
 	"""
 		Executes bot command if the command is known
 	"""
-	# Default response is help text for the user
-	default_response = "Not sure what you mean. Try *{}*.".format(EXAMPLE_COMMAND)
+	#eliza mode
+	global eliza_mode
 
+	# Default response is help text for the user
+	default_response = "Not sure what you mean. Try *{}*, or *tell <name> they tha best*".format(EXAMPLE_COMMAND)
+	
 	# Finds and executes the given command, filling in response
 	response = None
 
 	# This is where you start to implement more commands!
 	try:
-		dResponses = [
-			[
-				re.compile("HI|HELLO|WHAT'S UP|HEY|WHAT UP", re.I)
-				,"What up"
-			]
-			,[
-				re.compile(".*YOLO.*", re.I)
-				,"That's the motto"
-			]
-		]
-		
 		best_regex = re.compile(".*tell (.*) they (tha|da) best")
 		fact_regex = re.compile("(TELL|GIVE) ME.*DRAKE FACT", re.I)
 		hi_regex = re.compile("HI|HELLO|WHAT'S UP|HEY|WHAT UP", re.I)
 		yolo_regex = re.compile(".*YOLO.*", re.I)
+		eliza_regex = re.compile(".*enter therapy mode.*", re.I)
+		eliza_off_regex = re.compile(".*exit therapy mode.*", re.I)
+		love_regex = re.compile(".*do you love me.*", re.I)
 
 		if fact_regex.match(command) is not None:
 			response = random_drake_fact()
 		elif best_regex.match(command):
-			best_result = best_regex.match(command)
-			response = "{}, you da best, you da you da best".format(best_result.group(1))
+			response = "{}, you da best, you da you da best".format((best_regex.match(command)).group(1))
 		elif hi_regex.match(command):
 			response = "What up"
 		elif yolo_regex.match(command):
 			response = "That's the motto"
+		elif love_regex.match(command):
+			response = "Only partly.  I only love my bed and momma; I'm sorry."
+		elif eliza_regex.match(command):
+			eliza_mode = 1
+			response = therapist.respond("Hello")
+		elif eliza_off_regex.match(command):
+			eliza_mode = 0
+			response = therapist.respond("quit")
 		else:
-			response = therapist.respond(command)
-	except:
+			if eliza_mode is 1:
+				response = therapist.respond(command)
+			else:
+				response = default_response
+	except Exception as e:
 		response = "I have crashed! Help!"
+		print(str(e))
 
 	# Sends the response back to the channel
 	slack_client.api_call(
