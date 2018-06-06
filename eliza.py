@@ -21,7 +21,7 @@ class eliza:
   #----------------------------------------------------------------------
   def translate(self,str,dict):
     words = str.lower().split()
-    keys = dict.keys();
+    keys = dict.keys()
     for i in range(0,len(words)):
       if words[i] in keys:
         words[i] = dict[words[i]]

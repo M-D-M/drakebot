@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os, time, re, random, eliza
 from slackclient import SlackClient
 
@@ -14,8 +16,17 @@ drakebot_id = None
 # constants
 RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
 EXAMPLE_COMMAND = "give me a drake fact"
-MENTION_REGEX = "^.*<@(|[WU].+?)>\W?(.*)"
+MENTION_REGEX = r"^.*<@(|[WU].+?)>\W?(.*)"
 DRAKE_FACT_FILE = 'drakebot_facts.txt'
+DRAKE_REGEXES = {
+	"best": re.compile(".*tell (.*) they (tha|da) best")
+	,"fact": re.compile("(TELL|GIVE) ME.*DRAKE FACT", re.I)
+	,"hi": re.compile("HI|HELLO|WHAT'S UP|HEY|WHAT UP", re.I)
+	,"yolo": re.compile(".*YOLO.*", re.I)
+	,"eliza_on": re.compile(".*enter therapy mode.*", re.I)
+	,"eliza_off": re.compile(".*exit therapy mode.*", re.I)
+	,"love": re.compile(".*do you love me.*", re.I) 
+}
 
 def random_drake_fact():
 	afile = open(DRAKE_FACT_FILE)
@@ -54,6 +65,9 @@ def handle_command(command, channel):
 	#eliza mode
 	global eliza_mode
 
+	#global regexes
+	global DRAKE_REGEXES
+
 	# Default response is help text for the user
 	default_response = "Not sure what you mean. Try *{}*, or *tell <name> they tha best*".format(EXAMPLE_COMMAND)
 	
@@ -62,6 +76,7 @@ def handle_command(command, channel):
 
 	# This is where you start to implement more commands!
 	try:
+		"""
 		best_regex = re.compile(".*tell (.*) they (tha|da) best")
 		fact_regex = re.compile("(TELL|GIVE) ME.*DRAKE FACT", re.I)
 		hi_regex = re.compile("HI|HELLO|WHAT'S UP|HEY|WHAT UP", re.I)
@@ -69,21 +84,22 @@ def handle_command(command, channel):
 		eliza_regex = re.compile(".*enter therapy mode.*", re.I)
 		eliza_off_regex = re.compile(".*exit therapy mode.*", re.I)
 		love_regex = re.compile(".*do you love me.*", re.I)
+		"""
 
-		if fact_regex.match(command) is not None:
+		if DRAKE_REGEXES["fact"].match(command) is not None:
 			response = random_drake_fact()
-		elif best_regex.match(command):
+		elif DRAKE_REGEXES["best"].match(command):
 			response = "{}, you da best, you da you da best".format((best_regex.match(command)).group(1))
-		elif hi_regex.match(command):
+		elif DRAKE_REGEXES["hi"].match(command):
 			response = "What up"
-		elif yolo_regex.match(command):
+		elif DRAKE_REGEXES["yolo"].match(command):
 			response = "That's the motto"
-		elif love_regex.match(command):
+		elif DRAKE_REGEXES["love"].match(command):
 			response = "Only partly.  I only love my bed and momma; I'm sorry."
-		elif eliza_regex.match(command):
+		elif DRAKE_REGEXES["eliza_on"].match(command):
 			eliza_mode = 1
 			response = therapist.respond("Hello")
-		elif eliza_off_regex.match(command):
+		elif DRAKE_REGEXES["eliza_off"].match(command):
 			eliza_mode = 0
 			response = therapist.respond("quit")
 		else:
