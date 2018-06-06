@@ -76,16 +76,6 @@ def handle_command(command, channel):
 
 	# This is where you start to implement more commands!
 	try:
-		"""
-		best_regex = re.compile(".*tell (.*) they (tha|da) best")
-		fact_regex = re.compile("(TELL|GIVE) ME.*DRAKE FACT", re.I)
-		hi_regex = re.compile("HI|HELLO|WHAT'S UP|HEY|WHAT UP", re.I)
-		yolo_regex = re.compile(".*YOLO.*", re.I)
-		eliza_regex = re.compile(".*enter therapy mode.*", re.I)
-		eliza_off_regex = re.compile(".*exit therapy mode.*", re.I)
-		love_regex = re.compile(".*do you love me.*", re.I)
-		"""
-
 		if DRAKE_REGEXES["fact"].match(command) is not None:
 			response = random_drake_fact()
 		elif DRAKE_REGEXES["best"].match(command):
