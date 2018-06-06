@@ -23,10 +23,11 @@ DRAKE_REGEXES = {
 	,"fact": re.compile("(TELL|GIVE) ME.*DRAKE FACT", re.I)
 	,"hi": re.compile("HI|HELLO|WHAT'S UP|HEY|WHAT UP", re.I)
 	,"yolo": re.compile(".*YOLO.*", re.I)
-	,"eliza_on": re.compile(".*enter therapy mode.*", re.I)
-	,"eliza_off": re.compile(".*exit therapy mode.*", re.I)
-	,"love": re.compile(".*do you love me.*", re.I) 
+	,"eliza_on": re.compile(".*can we talk.*|.*I want to talk.*", re.I)
+	,"eliza_off": re.compile(".*I feel much better now.*|.*I'm done talking.*", re.I)
+	,"love": re.compile(".*do you love me.*", re.I)
 }
+DEFAULT_RESPONSE = "Not sure what you mean. Try *{}*, or *tell <name> they tha best*".format(EXAMPLE_COMMAND)
 
 def random_drake_fact():
 	afile = open(DRAKE_FACT_FILE)
@@ -62,15 +63,9 @@ def handle_command(command, channel):
 	"""
 		Executes bot command if the command is known
 	"""
-	#eliza mode
-	global eliza_mode
+	# pull in global variables
+	global eliza_mode, DRAKE_REGEXES, DEFAULT_RESPONSE
 
-	#global regexes
-	global DRAKE_REGEXES
-
-	# Default response is help text for the user
-	default_response = "Not sure what you mean. Try *{}*, or *tell <name> they tha best*".format(EXAMPLE_COMMAND)
-	
 	# Finds and executes the given command, filling in response
 	response = None
 
@@ -79,7 +74,7 @@ def handle_command(command, channel):
 		if DRAKE_REGEXES["fact"].match(command) is not None:
 			response = random_drake_fact()
 		elif DRAKE_REGEXES["best"].match(command):
-			response = "{}, you da best, you da you da best".format((best_regex.match(command)).group(1))
+			response = "{}, you da best, you da you da best".format((DRAKE_REGEXES["best"].match(command)).group(1))
 		elif DRAKE_REGEXES["hi"].match(command):
 			response = "What up"
 		elif DRAKE_REGEXES["yolo"].match(command):
@@ -96,7 +91,7 @@ def handle_command(command, channel):
 			if eliza_mode is 1:
 				response = therapist.respond(command)
 			else:
-				response = default_response
+				response = DEFAULT_RESPONSE
 	except Exception as e:
 		response = "I have crashed! Help!"
 		print(str(e))
@@ -105,7 +100,7 @@ def handle_command(command, channel):
 	slack_client.api_call(
 		"chat.postMessage",
 		channel=channel,
-		text=response or default_response
+		text=response or DEFAULT_RESPONSE
 	)
 
 if __name__ == "__main__":
