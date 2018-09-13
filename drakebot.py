@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os, time, re, random, eliza
 from slackclient import SlackClient
@@ -20,7 +20,7 @@ MENTION_REGEX = r"^.*<@(|[WU].+?)>\W?(.*)"
 DRAKE_FACT_FILE = 'drakebot_facts.txt'
 DRAKE_REGEXES = {
 	"best": re.compile(".*tell (.*) they (tha|da) best")
-	,"fact": re.compile("(TELL|GIVE) ME.*DRAKE FACT", re.I)
+	,"fact": re.compile(".*(TELL|GIVE) ME.*DRAKE FACT", re.I)
 	,"hi": re.compile("HI|HELLO|WHAT'S UP|HEY|WHAT UP", re.I)
 	,"yolo": re.compile(".*YOLO.*", re.I)
 	,"eliza_on": re.compile(".*can we talk.*|.*I want to talk.*", re.I)
