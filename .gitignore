@@ -5,6 +5,7 @@ bin
 lib64
 share
 .vscode/
+env.bash
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
