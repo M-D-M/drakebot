@@ -4,6 +4,7 @@ pyvenv.cfg
 bin
 lib64
 share
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
