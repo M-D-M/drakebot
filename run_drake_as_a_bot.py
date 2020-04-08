@@ -3,10 +3,11 @@ import random
 import logging
 import drakebot
 import eliza
+import ENV
 
 # Constants
-EXAMPLE_COMMAND = "give me a drake fact"
-DEFAULT_RESPONSE = "Not sure what you mean. Try *{}*, or *tell <name> they tha best*".format(EXAMPLE_COMMAND)
+LOGGING_FMT='%(levelname)s [%(asctime)s] %(name)s:%(message)s'
+DEFAULT_RESPONSE = "Not sure what you mean. Try *give me a drake fact*, or *tell <name> they tha best*"
 
 # Solution-specific constants
 DRAKE_FACT_FILE = 'drakebot_facts.txt'
@@ -23,6 +24,7 @@ DRAKE_REGEXES = {
 # Global variables
 Eliza_Mode = 0
 Therapist = None
+Slack_Interface = None
 
 
 def random_drake_fact():
@@ -70,3 +72,24 @@ def respond_to_message(command: str):
         logging.error(str(e))
 
     return response
+
+
+if __name__ == "__main__":
+    logging_vars = {
+        'format': LOGGING_FMT
+    }
+    if (ENV.DEBUG):
+        logging_vars.update({
+            'level': logging.DEBUG
+        })
+    else:
+        logging_vars.update({
+            'level': logging.INFO
+            ,'filename': 'bot_output.log'
+        })
+
+    logging.basicConfig(**logging_vars)
+
+    Slack_Interface = drakebot.drakebot(ENV.SLACK_BOT_TOKEN, respond_to_message)
+
+    Slack_Interface.start()
