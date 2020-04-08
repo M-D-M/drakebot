@@ -8,15 +8,15 @@ MENTION_REGEX = r"^.*<@(|[WU].+?)>\W?(.*)"
 # global variables
 Drakebot_ID = ''
 Token = ''
-rtmclient = ''
 Message_Function = None
 
 class drakebot:
 	def __init__(self, token: str, message_function):
-		if (token is None):
-			raise Exception(f'''No value found for environment variable "SLACK_BOT_TOKEN"! 
-		Did you forget to activate the python environment, or create the ENV.py file with necessary environment variables?
-		''')
+		if (token is None or token == ''):
+			raise Exception('No value found for token!')
+
+		if (not callable(message_function)):
+			raise Exception('Function passed for "message_function" is not callable!')
 
 		self.Token = token
 		self.Message_Function = message_function
