@@ -55,7 +55,7 @@ def respond_to_message(command: str):
         elif DRAKE_REGEXES["yolo"].match(command):
             response = "That's the motto"
         elif DRAKE_REGEXES["love"].match(command):
-            response = "Only paresponse = Nonertly.  I only love my bed and momma; I'm sorry."
+            response = "Only partly.  I only love my bed and momma; I'm sorry."
         elif DRAKE_REGEXES["eliza_on"].match(command):
             Eliza_Mode = 1
             response = Therapist.respond("Hello")
