@@ -72,7 +72,7 @@ class drakebot:
 					# ,thread_ts = thread_ts
 				)
 			else:
-				logging.debug('This message was not inteded for the Drake Bot.  Ignore this.')
+				logging.debug('This message was not inteded for the bot.  Ignore this.')
 
 
 if __name__ == "__main__":
