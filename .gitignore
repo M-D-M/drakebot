@@ -5,7 +5,7 @@ bin
 lib64
 share
 .vscode/
-ENV.py
+CONFIG.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
