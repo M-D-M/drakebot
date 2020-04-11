@@ -1,6 +1,10 @@
 import re
+import sys
 import logging
 import drakebot
+import CONFIG 
+
+sys.path.append('/var/tmp/share')
 import ENV
 
 # Constants
@@ -26,7 +30,7 @@ def get_help(message: str):
 
 
 def get_status(message: str):
-    response_message = "Under construction."
+    response_message = ENV.callShellCmd('./ark_helper_scripts/getServersOnline.bash')
     return response_message
 
 
@@ -74,7 +78,7 @@ if __name__ == "__main__":
     logging_vars = {
         'format': LOGGING_FMT
     }
-    if (ENV.DEBUG):
+    if (CONFIG.DEBUG):
         logging_vars.update({
             'level': logging.DEBUG
         })
@@ -108,5 +112,5 @@ if __name__ == "__main__":
         ,'function': get_help
     }]
 
-    Slack_Interface = drakebot.drakebot(ENV.SLACK_BOT_TOKEN, respond_to_message)
+    Slack_Interface = drakebot.drakebot(CONFIG.SLACK_BOT_TOKEN, respond_to_message)
     Slack_Interface.start()
