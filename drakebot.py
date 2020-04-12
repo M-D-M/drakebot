@@ -64,7 +64,7 @@ class drakebot:
 				# user = data['user']
 				webclient = payload['web_client']
 
-				response = self.Message_Function(message)
+				response = self.Message_Function(message, payload)
 
 				webclient.chat_postMessage(
 					channel=channel_id
