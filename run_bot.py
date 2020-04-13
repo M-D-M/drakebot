@@ -1,5 +1,6 @@
 import re
 import sys
+import os
 import platform
 import logging
 import drakebot
@@ -18,14 +19,6 @@ DEFAULT_RESPONSE = "Not sure what you mean. Try *help* or *update <password>*."
 Slack_Interface = None
 Response_Regex = []
 ARK_Server_Password = ''
-
-
-def check_ark_password(password_attempt: str):
-    matches = False
-
-
-
-    return matches
 
 
 def post_message(message: str, payload):
@@ -53,20 +46,32 @@ def get_status(regex_search_obj, payload):
 
 
 def update_servers(regex_search_obj, payload):
-    post_message('Beginning ARK update!', payload)
-
-    response_message = "Under construction."
+    if regex_search_obj[1] == ARK_Server_Password:
+        post_message('Beginning ARK update!', payload)
+        response_message = "Under construction."
+    else:
+        response_message = 'Password does not match! Try again.'
 
     return response_message
 
 
 def restart_servers(regex_search_obj, payload):
-    response_message = "Under construction."
+    if regex_search_obj[1] == ARK_Server_Password:
+        post_message('Beginning ARK update!', payload)
+        response_message = "Under construction."
+    else:
+        response_message = 'Password does not match! Try again.'
+
     return response_message
 
 
 def stop_servers(regex_search_obj, payload):
-    response_message = "Under construction."
+    if regex_search_obj[1] == ARK_Server_Password:
+        post_message('Beginning ARK update!', payload)
+        response_message = "Under construction."
+    else:
+        response_message = 'Password does not match! Try again.'
+
     return response_message
 
 
@@ -133,6 +138,10 @@ if __name__ == "__main__":
         ,'regex': r'help'
         ,'function': get_help
     }]
+
+    # Get ARK Server Password from ARK config files
+    # Under construction; for now just get hardcoded password in local CONFIG.py file
+    ARK_Server_Password = CONFIG.ARK_PASSWORD
 
     Slack_Interface = drakebot.drakebot(CONFIG.SLACK_BOT_TOKEN, respond_to_message)
     Slack_Interface.start()
