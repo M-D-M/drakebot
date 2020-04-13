@@ -13,12 +13,14 @@ if (platform.system() != 'Windows'):
 # Constants
 LOGGING_FMT='%(levelname)s [%(asctime)s] %(name)s:%(message)s'
 DEFAULT_RESPONSE = "Not sure what you mean. Try *help* or *update <password>*."
+ARK_SHELL_SCRIPTS_DIR = 'ark_helper_scripts' 
 
 
 # Global variables
 Slack_Interface = None
 Response_Regex = []
 ARK_Server_Password = ''
+ARK_SHELL_SCRIPTS_PATH = ''
 
 
 def post_message(message: str, payload):
@@ -41,7 +43,7 @@ def get_help(regex_search_obj, payload):
 
 
 def get_status(regex_search_obj, payload):
-    response_message = ENV.callShellCmd('./ark_helper_scripts/getServersOnline.bash')
+    response_message = ENV.callShellCmd(os.path.join(ARK_SHELL_SCRIPTS_PATH, 'getServersOnline.bash'))
     return response_message
 
 
@@ -138,6 +140,9 @@ if __name__ == "__main__":
         ,'regex': r'help'
         ,'function': get_help
     }]
+
+    # Get ARK shell helper scripts dir path
+    ARK_SHELL_SCRIPTS_PATH = os.path.join(os.path.dirname(__file__), ARK_SHELL_SCRIPTS_DIR)
 
     # Get ARK Server Password from ARK config files
     # Under construction; for now just get hardcoded password in local CONFIG.py file
