@@ -21,6 +21,7 @@ Slack_Interface = None
 Response_Regex = []
 ARK_Server_Password = ''
 ARK_SHELL_SCRIPTS_PATH = ''
+Command_Currently_Being_Executed = None
 
 
 def post_message(message: str, payload):
@@ -78,6 +79,7 @@ def stop_servers(regex_search_obj, payload):
 
 
 def respond_to_message(message: str, payload = None):
+    global Command_Currently_Being_Executed
     response = ''
 
     logging.debug(f'Passed string: {message}')
@@ -90,8 +92,20 @@ def respond_to_message(message: str, payload = None):
 
                 if (not callable(regex_cfg_item['function'])):
                     raise Exception('{} is not a callable function!'.format(regex_cfg_item['function']))
+                if (Command_Currently_Being_Executed is None):
+                    Command_Currently_Being_Executed = {
+                        "command": regex_search_obj[0]
+                        ,"user": payload['data']['user']
+                    }
+                    logging.debug(f'Storing command: {Command_Currently_Being_Executed}')
 
-                response = regex_cfg_item['function'](regex_search_obj, payload)
+                    response = regex_cfg_item['function'](regex_search_obj, payload)
+
+                    logging.debug('Clearing stored command...')
+                    Command_Currently_Being_Executed = None
+                else:
+                    response = f'Sorry, the command "{Command_Currently_Being_Executed["command"]}" is currently being executed by "{Command_Currently_Being_Executed["user"]}".' 
+
                 break
     except Exception as e:
         response = "I have crashed! Help!"
