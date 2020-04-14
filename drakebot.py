@@ -3,7 +3,6 @@ import logging
 import slack
 import ssl as ssl_lib
 import certifi
-import asyncio
 
 # constants
 MENTION_REGEX = r"^.*<@(|[WU].+?)>\W?(.*)"
@@ -39,13 +38,10 @@ class drakebot:
 			logging.info('Starting Slack Bot RTM interface...')
 
 			ssl_context = ssl_lib.create_default_context(cafile=certifi.where())
-			loop = asyncio.new_event_loop()
-			asyncio.set_event_loop(loop)
 
-
-			rtmclient = slack.RTMClient(token=self.Token, ssl=ssl_context, run_async=True, loop=loop)
+			rtmclient = slack.RTMClient(token=self.Token, ssl=ssl_context)
 			rtmclient.run_on(event='message')(self.handle_command)
-			loop.run_until_complete(rtmclient.start())
+			rtmclient.start()
 		except Exception as e:
 			logging.critical(f"{e.__class__.__name__}: {e}\n\nConnection failed. Exception traceback printed above.")
 			raise
@@ -61,7 +57,7 @@ class drakebot:
 		return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
 
-	async def handle_command(self, **payload):
+	def handle_command(self, **payload):
 		response = ''
 		data = payload['data']
 
