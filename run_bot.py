@@ -1,6 +1,7 @@
 import re
 import sys
 import os
+from time import sleep
 import platform
 import logging
 import drakebot
@@ -51,6 +52,7 @@ def get_status(regex_search_obj, payload):
 def update_servers(regex_search_obj, payload):
     if regex_search_obj[1] == ARK_Server_Password:
         post_message('Beginning ARK update!', payload)
+        sleep(10)
         response_message = "Under construction."
     else:
         response_message = 'Password does not match! Try again.'
@@ -60,7 +62,8 @@ def update_servers(regex_search_obj, payload):
 
 def restart_servers(regex_search_obj, payload):
     if regex_search_obj[1] == ARK_Server_Password:
-        post_message('Beginning ARK update!', payload)
+        post_message('Beginning ARK restart!', payload)
+        sleep(10)
         response_message = "Under construction."
     else:
         response_message = 'Password does not match! Try again.'
@@ -70,7 +73,8 @@ def restart_servers(regex_search_obj, payload):
 
 def stop_servers(regex_search_obj, payload):
     if regex_search_obj[1] == ARK_Server_Password:
-        post_message('Beginning ARK update!', payload)
+        post_message('Beginning ARK stop!', payload)
+        sleep(10)
         response_message = "Under construction."
     else:
         response_message = 'Password does not match! Try again.'
@@ -88,10 +92,10 @@ def respond_to_message(message: str, payload = None):
         for regex_cfg_item in Response_Regex:
             regex_search_obj = re.search(regex_cfg_item['regex'], message)
             if (regex_search_obj is not None):
-                logging.info('Match found! Executing function for regex "{}".'.format(regex_cfg_item['regex']))
-
+                logging.info('Match found! Attempting to execute function for regex "{}".'.format(regex_cfg_item['regex']))
                 if (not callable(regex_cfg_item['function'])):
                     raise Exception('{} is not a callable function!'.format(regex_cfg_item['function']))
+
                 if (Command_Currently_Being_Executed is None):
                     Command_Currently_Being_Executed = {
                         "command": regex_search_obj[0]
@@ -104,12 +108,14 @@ def respond_to_message(message: str, payload = None):
                     logging.debug('Clearing stored command...')
                     Command_Currently_Being_Executed = None
                 else:
-                    response = f'Sorry, the command "{Command_Currently_Being_Executed["command"]}" is currently being executed by "{Command_Currently_Being_Executed["user"]}".' 
+                    response = f'Sorry, the command "{Command_Currently_Being_Executed["command"]}" is currently being executed by "<@{Command_Currently_Being_Executed["user"]}>".' 
 
                 break
     except Exception as e:
         response = "I have crashed! Help!"
         logging.error(str(e))
+        if (Command_Currently_Being_Executed is not None and payload['data']['user'] == Command_Currently_Being_Executed['user']):
+            Command_Currently_Being_Executed = None
 
     if response == '':
         response = DEFAULT_RESPONSE
