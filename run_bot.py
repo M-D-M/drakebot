@@ -12,8 +12,7 @@ if (platform.system() != 'Windows'):
     import ENV
 
 # Constants
-
-DEFAULT_SHELL_CMD_TIMEOUT = 30
+DEFAULT_SHELL_CMD_TIMEOUT = 180
 LOGGING_FMT='%(levelname)s [%(asctime)s] %(name)s:%(message)s'
 DEFAULT_RESPONSE = "Not sure what you mean. Try *help* or *update <password>*."
 ARK_SHELL_SCRIPTS_DIR = 'ark_helper_scripts' 
@@ -35,6 +34,7 @@ Command_Currently_Being_Executed = None
 
 def get_total_time_msg(start_time: time):
     return f'(_Total time to complete command: {time.strftime("%M:%S", time.gmtime(time.time() - start_time))} minute(s)_)'
+
 
 def post_message(message: str, payload):
     payload['web_client'].chat_postMessage(
@@ -80,7 +80,7 @@ def restart_servers(regex_search_obj, payload):
         try:
             for ark_server in ARK_SERVER_LIST:
                 post_message(f'Attempting to restart _{ark_server}_...', payload)
-                # response_message = ENV.callShellCmd([ARK_CONTROL_SCRIPT, f'{ark_server}.cfg', 'restart'], timeout = DEFAULT_SHELL_CMD_TIMEOUT)
+                ENV.callShellCmd([ARK_CONTROL_SCRIPT, f'{ark_server}.cfg', 'restart'], timeout = DEFAULT_SHELL_CMD_TIMEOUT)
             response_message = f'*All servers restarted!* Please wait 60 seconds or so for the servers to be available. {get_total_time_msg(start_time)}' 
         except Exception as e:
             response_message = f'Help, I have crashed while trying to restart {ark_server}!\n(Stacktrace: {str(e)})'
@@ -98,7 +98,7 @@ def stop_servers(regex_search_obj, payload):
         try:
             for ark_server in ARK_SERVER_LIST:
                 post_message(f'Attempting to stop _{ark_server}_...', payload)
-                # response_message = ENV.callShellCmd([ARK_CONTROL_SCRIPT, f'{ark_server}.cfg', 'stop'], timeout = DEFAULT_SHELL_CMD_TIMEOUT)
+                ENV.callShellCmd([ARK_CONTROL_SCRIPT, f'{ark_server}.cfg', 'stop'], timeout = DEFAULT_SHELL_CMD_TIMEOUT)
             response_message = f'*All servers stopped.* {get_total_time_msg(start_time)}'
         except Exception as e:
             response_message = f'Help, I have crashed while trying to stop {ark_server}!\n(Stacktrace: {str(e)})'
