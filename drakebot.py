@@ -43,8 +43,7 @@ class drakebot:
 			rtmclient.run_on(event='message')(self.handle_command)
 			rtmclient.start()
 		except Exception as e:
-			logging.critical(f"{e.__class__.__name__}: {e}\n\nConnection failed. Exception traceback printed above.")
-			raise
+			logging.error(f"{e.__class__.__name__}: {e}\n\nConnection failed. Exception traceback printed above.")
 
 
 	def parse_direct_mention(self, message_text):
